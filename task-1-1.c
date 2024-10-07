@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 
-/* @brief рассчитывает выражение A по формуле 
+/** @brief рассчитывает выражение A по формуле 
  * @param x значение константы x
  * @param y значение константы y
  * @param z значение константы z
@@ -9,7 +9,7 @@
  */
 double getA(const double x, const double y, const double z);
 
-/* @brief рассчитывает выражение B по формуле
+/** @brief рассчитывает выражение B по формуле
  * @param x значение константы x
  * @param y значение константы y
  * @param z значение константы z
@@ -17,7 +17,7 @@ double getA(const double x, const double y, const double z);
  */
 double getB(const double x, const double y, const double z);
 
-/* @brief Точка входа в программу
+/** @brief Точка входа в программу
  * @return 0 в случае успеха
  */
 int main(void)
