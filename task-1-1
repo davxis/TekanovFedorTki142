@@ -1,9 +1,25 @@
 #include <stdio.h>
 #include <math.h>
 
+/* @brief рассчитывает выражение A по формуле 
+ * @param x значение константы x
+ * @param y значение константы y
+ * @param z значение константы z
+ * @return рассчитанное значение
+ */
 double getA(const double x, const double y, const double z);
+
+/* @brief рассчитывает выражение B по формуле
+ * @param x значение константы x
+ * @param y значение константы y
+ * @param z значение константы z
+ * @return рассчитанное значение.
+ */
 double getB(const double x, const double y, const double z);
 
+/* @brief Точка входа в программу
+ * @return 0 в случае успеха
+ */
 int main(void)
 {
     const double x = 1.4;
