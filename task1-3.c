@@ -4,17 +4,17 @@
 #include  <errno.h>
 
 /**
+ * @brief считывает вещественное число
+ * @return возвращает вещественное число
+ */
+double input(void);
+
+/**
  * @brief рассчитывает работу эл.тока по формуле
  * @param I - сила тока
  * @param U - напряжение
  * @param time - время переведенное в секунды 
  * return рассчитанное значение работы силы тока
- */
-double input(void);
-
-/**
- * @brief считывает вещественное число
- * @return возвращает вещественное число
  */
 double result(const double R, const double I, const double Q);
 
