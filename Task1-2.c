@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <math.h>
 
 /**
  * @brief Вычисляет площадь прямоугольника.
@@ -7,9 +10,7 @@
  * @param height Высота прямоугольника.
  * @return Площадь прямоугольника.
  */
-double rectangle_area(double width, double height) {
-    return width * height;
-}
+double rectangle_area(const double width, const double height);
 
 /**
  * @brief Вычисляет площадь треугольника по формуле Герона.
@@ -19,32 +20,60 @@ double rectangle_area(double width, double height) {
  * @param c Длина третьей стороны треугольника.
  * @return Площадь треугольника.
  */
-double triangle_area(double a, double b, double c) {
-    double s = (a + b + c) / 2; // Полупериметр
-    return sqrt(s * (s - a) * (s - b) * (s - c)); // Формула Герона
+double triangle_area(const double a, const double b, const double c);
+
+/**
+ * @brief считывает вещественное число
+ * @return возвращает вещественное число
+ */
+double input(void);
+
+int main(void) 
+{
+    printf("Введите ширину и длину через пробел\n");
+    const double width = input(), height = input();
+    
+    printf("Введите стороны треугольника через пробел\n");
+    const double a = input(), b = input(), c = input();
+    
+    // Вычисление и вывод площади прямоугольника
+    printf("Площадь прямоугольника: %.2lf\n", rectangle_area(width, height));
+    
+    // Вычисление и вывод площади треугольника
+    printf("Площадь треугольника: %.2lf\n", triangle_area(a, b, c));
+    
+    return 0;
 }
 
-int main() {
-    double width, height;
-    double a, b, c;
+double input(void) 
+{
+    double value = 0.0;
+    int result = scanf("%lf", &value);
+    if (result != 1)
+   {
+       errno = EIO;
+       perror("Ошибка ввода");
+       exit(EXIT_FAILURE);
+   }
+   return value;
+}
 
-    // Ввод данных для прямоугольника
-    printf("Введите ширину прямоугольника: ");
-    scanf("%lf", &width);
-    printf("Введите высоту прямоугольника: ");
-    scanf("%lf", &height);
+double triangle_area(const double a, const double b, const double c) 
+{
+    if (a + b - c > 0 && a - b + c > 0 && b + c - a > 0)
+    {
+            const double s = (a + b + c) / 2; // Полупериметр
+        return sqrt(s * (s - a) * (s - b) * (s - c)); // Формула Герона
+    }
+    else 
+    {
+        printf("Такого треугольника не может существовать\n");
+        errno = EIO;
+        exit(EXIT_FAILURE);
+    }
+}
 
-    // Вычисление и вывод площади прямоугольника
-    double rect_area = rectangle_area(width, height);
-    printf("Площадь прямоугольника: %.2lfn", rect_area);
-
-    // Ввод данных для треугольника
-    printf("Введите длины сторон треугольника (a, b, c): ");
-    scanf("%lf %lf %lf", &a, &b, &c);
-
-    // Вычисление и вывод площади треугольника
-    double tri_area = triangle_area(a, b, c);
-    printf("Площадь треугольника: %.2lfn", tri_area);
-
-    return 0;
+double rectangle_area(const double width, const double height) 
+{
+    return width * height;
 }
