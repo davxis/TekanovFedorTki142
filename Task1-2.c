@@ -29,6 +29,10 @@ double triangle_area(const double a, const double b, const double c);
 double input(void);
 
 int main(void) 
+/**
+ * @brief Считывает вещественное.
+ * @return Возвращает вещественное число типа double.
+ */
 {
     printf("Введите ширину и длину через пробел\n");
     const double width = input(), height = input();
