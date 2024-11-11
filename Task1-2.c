@@ -28,11 +28,12 @@ double triangle_area(const double a, const double b, const double c);
  */
 double input(void);
 
-int main(void) 
 /**
  * @brief Точка входа в программу.
  * @return 0 в случае успеха.
  */
+int main(void)
+
 {
     printf("Введите ширину и длину через пробел\n");
     const double width = input(), height = input();
