@@ -1,85 +1,88 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
+#include <stdlib.h>
 #include <errno.h>
 
 /**
- * @param arifmetic_of_cubes - среднее арифметическое кубов этих чисел
- * @param abs_of_geometry - среднее геометрическое модулей этих чисел
+ * Функция для ввода числа с плавающей точкой (double).
+ * 
+ * @param msg Сообщение, выводимое пользователю перед вводом.
+ * @return Введенное число типа double.
  */
-enum repuest{arifmetic_of_cubes, abs_of_geometry};
+
+double inputDouble(const char* msg) {
+    char tmp[100];
+    double a;
+    int failed;
+    char* e;
+    do {
+        printf(msg);
+        fgets(tmp, 100, stdin);
+        errno = 0;
+        a = strtod(tmp, &e);
+        failed = *e != '\n' || errno != 0;
+        if (failed) {
+            printf("Your input should be valid double\n");
+        }
+    } while (failed);
+    return a;
+}
 
 /**
- * @brief среднее арифметическое кубов этих чисел
- * @return возвращает значение
+ * Функция для ввода целого числа (long).
+ * 
+ * @param msg Сообщение, выводимое пользователю перед вводом.
+ * @return Введенное число типа long.
  */
-double arifmetic_cubes(const double a, const double b);
+
+long inputLong(const char* msg) {
+    char tmp[100];
+    long a;
+    int failed;
+    char* e;
+    do {
+        printf(msg);
+        fgets(tmp, 100, stdin);
+        errno = 0;
+        a = strtol(tmp, &e, 10);
+        failed = *e != '\n' || errno != 0;
+        if (failed) {
+            printf("Your input should be valid long int\n");
+        }
+    } while (failed);
+    return a;
+}
 
 /**
- * @brief среднее геометрическое модулей этих чисел
- * @return возвращает значение
+ * Перечисление для выбора операции.
  */
-double abs_geometry(const double a, const double b);
 
-/**
- * @brief выбор варианта 
- * @return возвращает номер выбранного варианта
- */
-void menu(void);
+enum choice { CHOICE_AVG = 1, CHOICE_GEOM };
 
-/**
- * @brief считывает число
- * @return число
- */
-double input(void);
+int main() {
+    double a = inputDouble("a: ");
+    double b = inputDouble("b: ");
+    printf("a = %lf, b = %lf\n\n", a, b);
+    enum choice c = inputLong("Choose what you want:\n"
+        "1. (a^3 + b^3) / 2\n"
+        "2. sqrt(|a| * |b|)\n"
+        "other. exit\n"
+        "\n"
+        "Your choice [1-3]: ");
 
-/** 
- * @brief точка входа в программу
- * @return 0, в случае успеха 
- */
-int main(void)
-{
-    const double a = input(), b = input();
-    menu();
-    int choice = input();
-    switch(choice)
+    switch (c) {
+    case CHOICE_AVG:
     {
-        case arifmetic_of_cubes:
-            printf("%lf", arifmetic_cubes(a, b));
-            break;
-        case abs_of_geometry:
-            printf("%lf", abs_geometry(a, b));
-            break;
-        default:
-            printf("Неправильный ввод");
+        double avg = (pow(a, 3) + pow(b, 3)) / 2.0;
+        printf("(a^3 + b^3) / 2 = %lf\n", avg);
+        break;
+    }
+    case CHOICE_GEOM:
+    {
+        double geom = sqrt(fabs(a) * fabs(b));
+        printf("sqrt(|a| * |b|) = %lf\n", geom);
+        break;
+    }
     }
     return 0;
-}
-
-void menu(void)
-{
-    printf("arifmetic_of_cubes - %d\n", arifmetic_of_cubes);
-    printf("abs_of_geometry - %d\n", abs_of_geometry);
-}
-
-double input(void)
-{
-    double value = 0.0;
-    int result = scanf("%lf", &value);
-    if (result != 1) { 
-        errno = EIO;
-        printf("Не удалось считать число");
-        exit(EXIT_FAILURE);
-    } 
-    return value;
-}
-
-double arifmetic_cubes(const double a, const double b)
-{
-    return ((pow(a, 3) + pow(b, 3)) / 2);
-}
-
-double abs_geometry(const double a, const double b)
-{
-    return pow((fabs(a) * fabs(b)), (1/2));
 }
