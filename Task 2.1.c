@@ -4,86 +4,42 @@
 #include <errno.h>
 
 /**
- * Функция для ввода числа с плавающей точкой (double).
- * @brief Ввод числа с плавающей точкой.
- * @param msg Сообщение, выводимое пользователю перед вводом.
- * @return Введенное число типа double.
+ * @brief Функция для ввода значения типа double с проверкой корректности ввода.
+ * 
+ * @return Введенное значение типа double.
+ * 
+ * Если ввод некорректен, программа выводит сообщение об ошибке и завершает выполнение.
  */
-
-double inputDouble(const char* msg) {
-    char tmp[100];
-    double a;
-    int failed;
-    char* e;
-    do {
-        printf(msg);
-        fgets(tmp, 100, stdin);
-        errno = 0;
-        a = strtod(tmp, &e);
-        failed = *e != '\n' || errno != 0;
-        if (failed) {
-            printf("Your input should be valid double\n");
-        }
-    } while (failed);
-    return a;
-}
-
-/**
- * Функция для ввода целого числа (long).
- *  @brief Ввод целого числа.
- * @param msg Сообщение, выводимое пользователю перед вводом.
- * @return Введенное число типа long.
- */
-
-long inputLong(const char* msg) {
-    char tmp[100];
-    long a;
-    int failed;
-    char* e;
-    do {
-        printf(msg);
-        fgets(tmp, 100, stdin);
-        errno = 0;
-        a = strtol(tmp, &e, 10);
-        failed = *e != '\n' || errno != 0;
-        if (failed) {
-            printf("Your input should be valid long int\n");
-        }
-    } while (failed);
-    return a;
-}
-
-/**
- * @brief Перечисление для выбора операции.
- * Перечисление для выбора операции.
- */
-
-enum choice { CHOICE_AVG = 1, CHOICE_GEOM };
+double inputDouble(void);
 
 int main() {
-    double a = inputDouble("a: ");
-    double b = inputDouble("b: ");
-    printf("a = %lf, b = %lf\n\n", a, b);
-    enum choice c = inputLong("Choose what you want:\n"
-        "1. (a^3 + b^3) / 2\n"
-        "2. sqrt(|a| * |b|)\n"
-        "other. exit\n"
-        "\n"
-        "Your choice [1-3]: ");
+    double firstOperand = inputDouble();
+    double secondOperand = inputDouble();
+    printf("a = %lf, b = %lf\n\n", firstOperand, secondOperand);
 
-    switch (c) {
-    case CHOICE_AVG:
-    {
-        double avg = (pow(a, 3) + pow(b, 3)) / 2.0;
-        printf("(a^3 + b^3) / 2 = %lf\n", avg);
-        break;
-    }
-    case CHOICE_GEOM:
-    {
-        double geom = sqrt(fabs(a) * fabs(b));
-        printf("sqrt(|a| * |b|) = %lf\n", geom);
-        break;
-    }
-    }
+    double avg = (pow(firstOperand, 3) + pow(secondOperand, 3)) / 2.0;
+    printf("(a^3 + b^3) / 2 = %lf\n", avg);
+
+    double geom = sqrt(fabs(firstOperand) * fabs(secondOperand));
+    printf("sqrt(|a| * |b|) = %lf\n", geom);
+
     return 0;
+}
+
+/**
+ * @brief Функция для ввода значения типа double.
+ * 
+ * @return Введенное значение типа double.
+ * 
+ * Проверяет корректность ввода. В случае ошибки устанавливает errno и завершает программу.
+ */
+double inputDouble() {
+    double inputValue;
+    int result = scanf("%lf", &inputValue);
+    if (result != 1) {
+        errno = EIO;
+        perror("Your input should be valid double\n");
+        exit(EXIT_FAILURE);
+    }
+    return inputValue;
 }
