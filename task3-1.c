@@ -22,6 +22,10 @@ double inputDouble(void);
  */
 double f(double x);
 
+/**
+ * @brief Точка входа в программу.
+ * @return 0 в случае успеха.
+ */
 int main() {
     double xStart = inputDouble();
     double xEnd = inputDouble();
