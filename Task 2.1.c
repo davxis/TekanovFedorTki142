@@ -10,6 +10,10 @@
  */
 double inputDouble(void);
 
+/**
+ * @brief Точка входа в программу.
+ * @return 0 в случае успеха.
+ */
 int main() {
     double firstOperand = inputDouble();
     double secondOperand = inputDouble();
