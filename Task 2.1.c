@@ -4,6 +4,12 @@
 #include <errno.h>
 
 /**
+ * @brief Функция печатает меню для пользователя, а именно,
+ *        какие действия возможно выполнить.
+ */
+void printMenu(void);
+
+/**
  * @brief Функция для ввода значения типа double с сообщением.
  * @param msg Сообщение, которое будет выведено перед вводом значения.
  * @return Введенное значение типа double.
@@ -25,16 +31,6 @@ long inputLong(const char* msg);
 enum choice { CHOICE_AVG = 1, CHOICE_GEOM };
 
 /**
- * @brief Строка меню для выбора операции.
- */
-const char* menu = "Choose what you want:\n"
-"1. (a^3 + b^3) / 2\n"
-"2. sqrt(|a| * |b|)\n"
-"other. exit\n"
-"\n"
-"Your choice [1-3]: ";
-
-/**
  * @brief Точка входа в программу.
  * @return 0 в случае успеха.
  */
@@ -42,8 +38,9 @@ int main() {
     double firstOperand = inputDouble("a: ");
     double secondOperand = inputDouble("b: ");
     printf("a = %lf, b = %lf\n\n", firstOperand, secondOperand);
-    
-    enum choice chosenCommand = inputLong(menu);
+
+    printMenu();
+    enum choice chosenCommand = inputLong(NULL);
 
     switch (chosenCommand) {
     case CHOICE_AVG:
@@ -60,10 +57,23 @@ int main() {
     }
     default:
         printf("Bye!\n");
-        break;
+        return 1;
     }
-    
+
     return 0;
+}
+
+/**
+ * @brief Функция печатает меню для пользователя, а именно,
+ *        какие действия возможно выполнить.
+ */
+void printMenu(void) {
+    printf("Choose what you want:\n");
+    printf("1. (a^3 + b^3) / 2\n");
+    printf("2. sqrt(|a| * |b|)\n");
+    printf("other. exit\n");
+    printf("\n");
+    printf("Your choice [1-3]: ");
 }
 
 /**
@@ -73,8 +83,10 @@ int main() {
  * Если ввод некорректен, программа выводит сообщение об ошибке и завершает выполнение.
  */
 double inputDouble(const char* msg) {
-    double inputValue;
-    printf(msg);
+    double inputValue = 0;
+    if (msg != NULL) {
+        printf(msg);
+    }
     int result = scanf("%lf", &inputValue);
     if (result != 1) {
         errno = EIO;
@@ -91,8 +103,10 @@ double inputDouble(const char* msg) {
  * Если ввод некорректен, программа выводит сообщение об ошибке и завершает выполнение.
  */
 long inputLong(const char* msg) {
-    long inputValue;
-    printf(msg);
+    long inputValue = 0;
+    if (msg != NULL) {
+        printf(msg);
+    }
     int result = scanf("%ld", &inputValue);
     if (result != 1) {
         errno = EIO;
