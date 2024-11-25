@@ -76,12 +76,6 @@ void printMenu(void) {
     printf("Your choice [1-3]: ");
 }
 
-/**
- * @brief Функция для ввода значения типа double с сообщением.
- * @param msg Сообщение, которое будет выведено перед вводом значения.
- * @return Введенное значение типа double.
- * Если ввод некорректен, программа выводит сообщение об ошибке и завершает выполнение.
- */
 double inputDouble(const char* msg) {
     double inputValue = 0;
     if (msg != NULL) {
