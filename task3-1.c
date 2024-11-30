@@ -28,16 +28,19 @@ int main() {
     double xStart = inputDouble();
     double xEnd = inputDouble();
     double deltaX = inputDouble();
-    double epsilon = 1e-8;
+    if (deltaX <= 0) {
+        errno = EIO;
+        perror("deltaX should be greater than 0");
+        return EXIT_FAILURE;
+    }
 
     printf("xStart = %lf, xEnd = %lf, deltaX = %lf\n\n", xStart, xEnd, deltaX);
 
-    for (double x = xStart; x <= xEnd + epsilon; x += deltaX) {
+    for (double x = xStart; x <= xEnd + DBL_EPSILON; x += deltaX) {
         printf("f(%10.6lf) = %10.6lf\n", x, f(x));
     }
 
     return 0;
-}
 
 /**
  * @brief Функция для ввода значения типа double.
