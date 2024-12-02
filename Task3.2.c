@@ -35,7 +35,7 @@ double getSumOfSequence(const int n);
  * @param n Число элементов последовательности.
  * @param eps Значение epsilon.
  */
-double getSumOfSequenceMoreThanEps(const int n, double eps);
+double getSumOfSequenceMoreThanEps(const double eps);
 
 /**
  * @brief Точка входа в программу.
@@ -111,7 +111,7 @@ double getSumOfSequence(int n) {
  * @param n Число элементов последовательности.
  * @param eps Значение epsilon.
  */
-double getSumOfSequenceMoreThanEps(int n, double eps) {
+double getSumOfSequenceMoreThanEps(const double eps) {
     double resLessThanEps = 0.0;
     double term = -1.0;
     for (int k = 1; abs(term) >= eps+DBL_EPSILON; k++)
