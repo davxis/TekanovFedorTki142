@@ -48,7 +48,7 @@ int main(void) {
  * Проверяет корректность ввода. В случае ошибки устанавливает errno и завершает программу.
  */
 double inputDouble() {
-    double inputValue;
+    double inputValue = 0;
     int result = scanf("%lf", &inputValue);
     if (result != 1) {
         errno = EIO;
@@ -63,6 +63,6 @@ double inputDouble() {
  * @param x Значение, в котором вычисляется функция.
  * @return Значение функции f(x) в точке x.
  */
-double f(double x) {
+double f(const double x) {
     return x - 1.0 / (3.0 + sin(3.6 * x));
 }
