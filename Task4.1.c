@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <time.h>
+
+struct Result {
+    int sumOfNegs;
+    int posAndLesOrEqA;
+    int lastPair;
+}
 
 /**
  * @brief Создаёт и заполняет массив случайными значениями от min до max или же пользовательским вводом.
@@ -96,29 +103,40 @@ int determineLastPairOfDiffSigns(const int* ar, const size_t n);
  * @brief точка входа в программу
  * @return 0 в случае успехa
  */
-int main() {
+enum choice { CHOICE_RANDOM = 1, CHOICE_KEYBOARD };
+
+int main(void) {
     srand((unsigned int)time(NULL));
-    int min = -100;
-    int max = 200;
+    int min = inputInt("min: ");
+    int max = inputInt("max: ");
+    if (min > max) {
+        errno = EIO;
+        perror("max should be greater or equal than min");
+        return EXIT_FAILURE;
+    }
 
     int n = inputInt("n: ");
-    int A = inputInt("A: ");
+    if (n <= 0) {
+        errno = EIO;
+        perror("\"n\" should be greater than 0");
+        return EXIT_FAILURE;
+    }
+    int a = inputInt("A: ");
     int* ar = inputArray(n, min, max);
     displayArray(ar, n);
 
-    int sumOfNegs, posAndLesOrEqA, lastPair;
-    calcEverything(ar, n, A, &sumOfNegs, &posAndLesOrEqA, &lastPair);
+    struct Result result = calcEverything(ar, n, a);
 
-    displayCalculationResults(sumOfNegs, posAndLesOrEqA, lastPair);
+    displayCalculationResults(result);
 
     free(ar);
     return 0;
 }
 
-int* inputArray(int n, int min, int max) {
+int* inputArray(const size_t n, const int min, const int max) {
     int* ar = allocIntArray(n);
-    int choice = inputInt("choice (1 - random, other - keyboard): ");
-    if (choice == 1) {
+    enum choice choice = (enum choice) inputInt("choice (1 - random, other - keyboard): ");
+    if (choice == CHOICE_RANDOM) {
         genRandomValues(ar, n, min, max);
     } else {
         setArrayValuesByInput(ar, n);
@@ -126,23 +144,29 @@ int* inputArray(int n, int min, int max) {
     return ar;
 }
 
-void calcEverything(int* ar, int n, int A, int* sumOfNegs, int* posAndLesOrEqA, int* lastPair) {
-    *sumOfNegs = calcSumOfNegs(ar, n);
-    *posAndLesOrEqA = calcSumOfPosAndLesOrEqA(ar, n, A);
-    *lastPair = determineLastPairOfDiffSigns(ar, n);
+const struct Result calcEverything(const int* ar, const size_t n, const int a) {
+    int sumOfNegs = calcSumOfNegs(ar, n);
+    int posAndLesOrEqA = calcSumOfPosAndLesOrEqA(ar, n, a);
+    int lastPair = determineLastPairOfDiffSigns(ar, n);
+    struct Result result = {
+        .sumOfNegs = sumOfNegs,
+        .posAndLesOrEqA = posAndLesOrEqA,
+        .lastPair = lastPair,
+    };
+    return result;
 }
 
+void displayCalculationResults(const struct Result result) {
+    printf("sum of negative elems: %d\n", result.sumOfNegs);
+    printf("sum of elems in range (0; A]: %d\n", result.posAndLesOrEqA);
 
-void displayCalculationResults(int sumOfNegs, int posAndLesOrEqA, int lastPair) {
-    printf("sum of negative elems: %d\n", sumOfNegs);
-    printf("sum of elems in range (0; A]: %d\n", posAndLesOrEqA);
-
-    if (lastPair > 0) {
-        printf("number of last pair with different signs: %d\n", lastPair);
+    if (result.lastPair > 0) {
+        printf("number of last pair with different signs: %d\n", result.lastPair);
     } else {
         printf("no pairs with different signs\n");
     }
 }
+
 
 
 /**
@@ -165,7 +189,7 @@ int inputInt(const char* msg) {
     return inputValue;
 }
 
-int* allocIntArray(int n) {
+int* allocIntArray(const size_t n) {
     int* ar = (int*)malloc(n * sizeof(int));
     if (!ar) {
         errno = ENOMEM;
@@ -175,21 +199,21 @@ int* allocIntArray(int n) {
     return ar;
 }
 
-void genRandomValues(int* ar, int n, int min, int max) {
-    for (int i = 0; i < n; i++) {
+void genRandomValues(int* ar, const size_t n, const int min, const int max) {
+    for (size_t i = 0; i < n; i++) {
         ar[i] = rand() % (max - min + 1) + min;
     }
 }
 
-void setArrayValuesByInput(int* ar, int n) {
-    for (int i = 0; i < n; i++) {
+void setArrayValuesByInput(int* ar, const size_t n) {
+    for (size_t i = 0; i < n; i++) {
         ar[i] = inputInt("elem: ");
     }
 }
 
-void displayArray(int* ar, int n) {
+void displayArray(const int* ar, const size_t n) {
     printf("ar = [");
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
         if (i > 0) {
             printf(", ");
         }
@@ -199,9 +223,9 @@ void displayArray(int* ar, int n) {
 }
 
 
-int calcSumOfNegs(int* ar, int n) {
+int calcSumOfNegs(const int* ar, const size_t n) {
     int sumOfNegs = 0;
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
         if (ar[i] < 0) {
             sumOfNegs += ar[i];
         }
@@ -209,19 +233,19 @@ int calcSumOfNegs(int* ar, int n) {
     return sumOfNegs;
 }
 
-int calcSumOfPosAndLesOrEqA(int* ar, int n, int A) {
+int calcSumOfPosAndLesOrEqA(const int* ar, const size_t n, const int a) {
     int sumOfPosLesOrEqA = 0;
-    for (int i = 0; i < n; i++) {
-        if (ar[i] > 0 && ar[i] <= A) {
+    for (size_t i = 0; i < n; i++) {
+        if (ar[i] > 0 && ar[i] <= a) {
             sumOfPosLesOrEqA += ar[i];
         }
     }
     return sumOfPosLesOrEqA;
 }
 
-int determineLastPairOfDiffSigns(int* ar, int n) {
+int determineLastPairOfDiffSigns(const int* ar, const size_t n) {
     int lastPair = 0;
-    for (int i = 0; i < n - 1; i++) {
+    for (size_t i = 0; i < n - 1; i++) {
         if (ar[i] < 0 != ar[i + 1] < 0) {
             lastPair++;
         }
