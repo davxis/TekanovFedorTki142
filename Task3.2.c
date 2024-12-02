@@ -10,13 +10,24 @@
  */
 int inputInt(const char* msg);
 
+/**
+ * @brief Запрашивает у пользователя ввод числа с плавающей запятой (double).
+ * Эта функция отображает сообщение, переданное в качестве аргумента, 
+ * и ожидает ввода числа с плавающей запятой. Если введенное значение 
+ * не является корректным числом, функция будет запрашивать ввод до 
+ * тех пор, пока не будет введено корректное значение.
+ * @param msg Указатель на строку (const char*), содержащую сообщение, 
+ * которое будет отображаться пользователю при запросе ввода.            
+ * @return Возвращает введенное пользователем число с плавающей запятой 
+ *  типа double.
+ */
 double inputDouble(const char* msg);
 
 /**
  * @brief Вычисляет сумму членов последовательности.
  * @param n Число элементов последовательности.
  */
-double getSumOfSequence(int n);
+double getSumOfSequence(const int n);
 
 /**
  * @brief Вычисляет сумму членов последовательности,
@@ -24,7 +35,7 @@ double getSumOfSequence(int n);
  * @param n Число элементов последовательности.
  * @param eps Значение epsilon.
  */
-double getSumOfSequenceMoreThanEps(int n, double eps);
+double getSumOfSequenceMoreThanEps(const int n, double eps);
 
 /**
  * @brief Точка входа в программу.
@@ -33,7 +44,7 @@ double getSumOfSequenceMoreThanEps(int n, double eps);
 int main(void) {
     int n = inputInt("n: ");
     double eps = inputDouble("e: ");
-    if (eps <= 0) {
+    if (eps <= DBL_EPSILON) {
         errno = EIO;
         perror("epsilon should be greater than 0");
         return EXIT_FAILURE;
@@ -103,10 +114,9 @@ double getSumOfSequence(int n) {
 double getSumOfSequenceMoreThanEps(int n, double eps) {
     double resLessThanEps = 0.0;
     double term = -1.0;
-    for (int k = 1; k <= n; k++) {
-        if (abs(term) >= eps) {
-            resLessThanEps += term;
-        }
+    for (int k = 1; abs(term) >= eps+DBL_EPSILON; k++)
+    {
+        resLessThanEps += term;
         term *= -1.0 / k;
     }
     return resLessThanEps;
