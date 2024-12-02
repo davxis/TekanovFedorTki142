@@ -18,17 +18,17 @@ double inputDouble(void);
  *        проверять возможность расчёта функции в точке.
  * @return значение функции в точке
  */
-double f(double x);
+double f(const double x);
 
 /**
  * @brief Точка входа в программу.
  * @return 0 в случае успеха.
  */
-int main() {
+int main(void) {
     double xStart = inputDouble();
     double xEnd = inputDouble();
     double deltaX = inputDouble();
-    if (deltaX <= 0) {
+    if (deltaX <= DBL_EPSILON) {
         errno = EIO;
         perror("deltaX should be greater than 0");
         return EXIT_FAILURE;
