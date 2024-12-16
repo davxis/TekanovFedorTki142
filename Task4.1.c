@@ -125,9 +125,18 @@ int main(void) {
     int* ar = inputArray(n, min, max);
     displayArray(ar, n);
 
-    struct Result result = calcEverything(ar, n, a);
+    int sumOfNegs = calcSumOfNegs(ar, n);
+    int posAndLesOrEqA = calcSumOfPosAndLesOrEqA(ar, n, a);
+    int lastPair = determineLastPairOfDiffSigns(ar, n);
 
-    displayCalculationResults(result);
+    printf("sum of negative elems: %d\n", sumOfNegs);
+    printf("sum of elems in range (0; A]: %d\n", posAndLesOrEqA);
+
+    if (lastPair > 0) {
+        printf("number of last pair with different signs: %d\n", lastPair);
+    } else {
+        printf("no pairs with different signs\n");
+    }
 
     free(ar);
     return 0;
@@ -135,39 +144,18 @@ int main(void) {
 
 int* inputArray(const size_t n, const int min, const int max) {
     int* ar = allocIntArray(n);
-    enum choice choice = (enum choice) inputInt("choice (1 - random, other - keyboard): ");
-    if (choice == CHOICE_RANDOM) {
+    printf("choice (%d - random, other - keyboard): ", CHOICE_RANDOM);
+    enum choice choice = (enum choice) inputInt(NULL);
+    switch (choice) {
+    case CHOICE_RANDOM:
         genRandomValues(ar, n, min, max);
-    } else {
+        break;
+    default:
         setArrayValuesByInput(ar, n);
+        break;
     }
     return ar;
 }
-
-const struct Result calcEverything(const int* ar, const size_t n, const int a) {
-    int sumOfNegs = calcSumOfNegs(ar, n);
-    int posAndLesOrEqA = calcSumOfPosAndLesOrEqA(ar, n, a);
-    int lastPair = determineLastPairOfDiffSigns(ar, n);
-    struct Result result = {
-        .sumOfNegs = sumOfNegs,
-        .posAndLesOrEqA = posAndLesOrEqA,
-        .lastPair = lastPair,
-    };
-    return result;
-}
-
-void displayCalculationResults(const struct Result result) {
-    printf("sum of negative elems: %d\n", result.sumOfNegs);
-    printf("sum of elems in range (0; A]: %d\n", result.posAndLesOrEqA);
-
-    if (result.lastPair > 0) {
-        printf("number of last pair with different signs: %d\n", result.lastPair);
-    } else {
-        printf("no pairs with different signs\n");
-    }
-}
-
-
 
 /**
  * @brief Функция для ввода значения типа int с сообщением.
