@@ -1,242 +1,195 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <time.h>
+#include "4.h"
 
-struct Result {
-    int sumOfNegs;
-    int posAndLesOrEqA;
-    int lastPair;
-}
+int main(void)
+{ 
+    printf("Введите размер массива\n");
+    const size_t n = (size_t)pozitiv_input();
+    int* array = create_array(n);
 
-/**
- * @brief Создаёт и заполняет массив случайными значениями от min до max или же пользовательским вводом.
- * Способ ввода (генерация или клавиатура) задаётся пользователем.
- * @param n Количество элементов в массиве.
- * @param min Минимальное значение для генерации случайных чисел.
- * @param max Максимальное значение для генерации случайных чисел.
- * @return Указатель на созданный и заполненный массив целых чисел.
- */
-int* inputArray(const size_t n, const int min, const int max);
-
-/**
- * @brief Вычисляет три пункта задания и возвращает структуру с результатами вычислений.
- * @param ar Указатель на массив целых чисел.
- * @param n Количество элементов в массиве.
- * @param a Параметр для второго вычисления.
- * @return Структура Result, содержащая результаты трех вычислений.
- */
-const struct Result calcEverything(const int* ar, const size_t n, const int a);
-
-/**
- * @brief Отображает результаты вычислений в удобочитаемом виде на консоли.
- * @param result Структура Result, содержащая результаты вычислений.
- */
-void displayCalculationResults(const struct Result result);
-
-/**
- * @brief Функция для ввода значения типа int с сообщением.
- * Выводит сообщение перед вводом значения и ожидает ввода от пользователя.
- * Если ввод некорректен, программа выводит сообщение об ошибке и завершает выполнение.
- * @param msg Сообщение, которое будет выведено перед вводом значения.
- * @return Введенное значение типа int.
- */
-int inputInt(const char* msg);
-
-/**
- * @brief Выделяет память под массив из "n" элементов.
- * Обрабатывает ситуацию, когда это не удалось, выводя сообщение об ошибке и завершив выполнение программы.
- * @param n Количество элементов в массиве.
- * @return Указатель на выделенный массив целых чисел или NULL в случае ошибки.
- */
-int* allocIntArray(const size_t n);
-
-/**
- * @brief Генерирует случайные значения в массиве ar.
- * @param ar Указатель на массив целых чисел.
- * @param n Количество элементов в массиве.
- * @param min Минимальное значение для генерации случайных чисел.
- * @param max Максимальное значение для генерации случайных чисел.
- */
-void genRandomValues(int* ar, const size_t n, const int min, const int max);
-
-/**
- * @brief Заполняет массив значениями, введёнными пользователем.
- * @param ar Указатель на массив целых чисел.
- * @param n Количество элементов в массиве.
- */
-void setArrayValuesByInput(int* ar, const size_t n);
-
-/**
- * @brief Отображает элементы массива на консоль.
- * @param ar Указатель на массив целых чисел.
- * @param n Количество элементов в массиве.
- */
-void displayArray(const int* ar, const size_t n);
-
-/**
- * @brief Вычисляет сумму отрицательных элементов массива.
- * @param ar Указатель на массив целых чисел.
- * @param n Количество элементов в массиве.
- * @return Сумма отрицательных элементов массива.
- */
-int calcSumOfNegs(const int* ar, const size_t n);
-
-/**
- * @brief Вычисляет сумму положительных элементов массива, которые не превышают значение "a"
- * @param ar Указатель на массив целых чисел.
- * @param n Количество элементов в массиве.
- * @param a Параметр для ограничения суммы.
- * @return Сумма положительных элементов, не превышающих "a".
- */
-int calcSumOfPosAndLesOrEqA(const int* ar, const size_t n, const int a);
-
-/**
- * @brief Возвращает индекс последней пары соседних элементов, имеющих разные знаки.
- * Если таких пар нет, возвращается значение 0 (или -1 в зависимости от реализации).
- * @param ar Указатель на массив целых чисел.
- * @param n Количество элементов в массиве.
- * @return Индекс последней пары с разными знаками или 0, если таких пар нет.
- */
-int determineLastPairOfDiffSigns(const int* ar, const size_t n);
-/**
- * @brief точка входа в программу
- * @return 0 в случае успехa
- */
-enum choice { CHOICE_RANDOM = 1, CHOICE_KEYBOARD };
-
-int main(void) {
-    srand((unsigned int)time(NULL));
-    int min = inputInt("min: ");
-    int max = inputInt("max: ");
-    if (min > max) {
-        errno = EIO;
-        perror("max should be greater or equal than min");
-        return EXIT_FAILURE;
+    printf("Выберите метод заполнения массива.\n");
+    printf("%d - ручной ввод, %d - случайное заполнение\n", INPUT, RANDOM);
+    int dependet = pozitiv_input();
+    switch (dependet) {
+        case INPUT:
+            user_input(array, n);
+            break;
+        case RANDOM:
+            random_filling(array, n);
+            break;
+        default:
+            printf("Неверный ввод.\n");
+            free(array);
+            exit(EXIT_FAILURE);
     }
 
-    int n = inputInt("n: ");
-    if (n <= 0) {
-        errno = EIO;
-        perror("\"n\" should be greater than 0");
-        return EXIT_FAILURE;
-    }
-    int a = inputInt("A: ");
-    int* ar = inputArray(n, min, max);
-    displayArray(ar, n);
+    print_array(array, n);
 
-    int sumOfNegs = calcSumOfNegs(ar, n);
-    int posAndLesOrEqA = calcSumOfPosAndLesOrEqA(ar, n, a);
-    int lastPair = determineLastPairOfDiffSigns(ar, n);
+    printf("Эта программа подсчитывает сумму неотрицательнхы элементов массива\n");
+    int sum_negativ = sum_of_the_negative_elements(array, n);
+    printf("Сумма таких элементов: %d\n", sum_negativ);
 
-    printf("sum of negative elems: %d\n", sumOfNegs);
-    printf("sum of elems in range (0; A]: %d\n", posAndLesOrEqA);
+    printf("Пожалуйста введите целочисленное положительное число A\n");
+    int a = pozitiv_input(); 
+    int counter = number_of_positive_elements_depending_on_A(array, n, a);
+    printf("Кол-во положительных элементов массива < A: %d\n", counter);
 
-    if (lastPair > 0) {
-        printf("number of last pair with different signs: %d\n", lastPair);
-    } else {
-        printf("no pairs with different signs\n");
-    }
+    printf("Так же эта программа находит номер последней пары, в который элементы имеют разные знаки");
+    int pairs = number_of_the_last_pair(array, n);
+    printf("Номер этой пары: %d", pairs);
 
-    free(ar);
+    free(array);
     return 0;
 }
 
-int* inputArray(const size_t n, const int min, const int max) {
-    int* ar = allocIntArray(n);
-    printf("choice (%d - random, other - keyboard): ", CHOICE_RANDOM);
-    enum choice choice = (enum choice) inputInt(NULL);
-    switch (choice) {
-    case CHOICE_RANDOM:
-        genRandomValues(ar, n, min, max);
-        break;
-    default:
-        setArrayValuesByInput(ar, n);
-        break;
-    }
-    return ar;
-}
 
-/**
- * @brief Функция для ввода значения типа int с сообщением.
- * @param msg Сообщение, которое будет выведено перед вводом значения.
- * @return Введенное значение типа int.
- * Если ввод некорректен, программа выводит сообщение об ошибке и завершает выполнение.
- */
-int inputInt(const char* msg) {
-    int inputValue = 0;
-    if (msg != NULL) {
-        printf(msg);
-    }
-    int result = scanf("%d", &inputValue);
-    if (result != 1) {
-        errno = EIO;
-        perror("Your input should be valid int\n");
+
+int input(void) {
+    int value;
+    if (scanf("%d", &value) != 1) {
+        perror("Ошибка ввода");
         exit(EXIT_FAILURE);
     }
-    return inputValue;
+    return value;
 }
 
-int* allocIntArray(const size_t n) {
-    int* ar = (int*)malloc(n * sizeof(int));
-    if (!ar) {
-        errno = ENOMEM;
-        perror("no memory");
+int pozitiv_input(void) {
+    int value = input();
+    if (value <= 0) {
+        perror("Ошибка: введено некорректное число (должно быть > 0)");
         exit(EXIT_FAILURE);
     }
-    return ar;
+    return value;
 }
 
-void genRandomValues(int* ar, const size_t n, const int min, const int max) {
-    for (size_t i = 0; i < n; i++) {
-        ar[i] = rand() % (max - min + 1) + min;
+int* create_array(const size_t n) {
+    int* array = (int*)malloc(n * sizeof(int));
+    check_array(array);
+    return array;
+}
+
+void random_filling(int *array, const size_t n) {
+    check_array(array);
+
+    printf("Введите минимальное и максимальное значение:\n");
+    int min = input();
+    int max = input();
+
+    if (min > max) {
+        printf("Ошибка: минимальное значение больше максимального.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    for (size_t i = 0; i < n; ++i) {
+        array[i] = rand() % (max - min + 1) + min;
     }
 }
 
-void setArrayValuesByInput(int* ar, const size_t n) {
-    for (size_t i = 0; i < n; i++) {
-        ar[i] = inputInt("elem: ");
+void user_input(int *array, const size_t n) {
+    check_array(array);
+    for (size_t i = 0; i < n; ++i) {
+        printf("Введите %zu-й элемент:\n", i + 1);
+        array[i] = input();
     }
 }
 
-void displayArray(const int* ar, const size_t n) {
-    printf("ar = [");
-    for (size_t i = 0; i < n; i++) {
-        if (i > 0) {
-            printf(", ");
+void print_array(const int *array, const size_t n) {
+    check_array(array);
+    printf("Ваш массив: [");
+    for (size_t i = 0; i < n; ++i) {
+        printf("%d%s", array[i], (i < n - 1) ? ", " : "]\n");
+    }
+}
+
+void check_array(const int *array) {
+    if (!array) {
+        perror("Ошибка: массив не выделен");
+        exit(EXIT_FAILURE);
+    }
+}
+
+int* copy_array(const int *array, const size_t n) {
+    check_array(array);
+    int* new_array = (int*)malloc(n * sizeof(int));
+    check_array(new_array);
+
+    for (size_t i = 0; i < n; ++i) {
+        new_array[i] = array[i];
+    }
+    return new_array;
+}
+
+int sum_of_the_negative_elements(const int *array, const size_t n)
+{ 
+    check_array(array);
+
+    int sum = 0;
+    int nema = 0;
+    for(size_t i = 0; i < n; i++)
+    { 
+        if (array[i] < 0)
+        { 
+            sum += array[i];
         }
-        printf("%d", ar[i]);
-    }
-    printf("]\n");
-}
-
-
-int calcSumOfNegs(const int* ar, const size_t n) {
-    int sumOfNegs = 0;
-    for (size_t i = 0; i < n; i++) {
-        if (ar[i] < 0) {
-            sumOfNegs += ar[i];
+        else
+        { 
+            nema++;
         }
     }
-    return sumOfNegs;
+     
+    if (nema == n)
+    { 
+        printf("В вашем массиве нет отрицательных элементов\n");
+    }
+    
+    return sum;
 }
 
-int calcSumOfPosAndLesOrEqA(const int* ar, const size_t n, const int a) {
-    int sumOfPosLesOrEqA = 0;
-    for (size_t i = 0; i < n; i++) {
-        if (ar[i] > 0 && ar[i] <= a) {
-            sumOfPosLesOrEqA += ar[i];
-        }
+int number_of_positive_elements_depending_on_A(const int *array, const size_t n, const int a)
+{
+    check_array(array);
+    int counter = 0;
+    for(size_t i = 0; i < n; i++)
+    { 
+        if (array[i] > 0 && array[i] < a)
+            counter++;
     }
-    return sumOfPosLesOrEqA;
+
+    if (counter == 0)
+    { 
+        printf("Таких элементов не нашлось\n");
+    }
+
+    return counter;
 }
 
-int determineLastPairOfDiffSigns(const int* ar, const size_t n) {
-    int lastPair = 0;
-    for (size_t i = 0; i < n - 1; i++) {
-        if (ar[i] < 0 != ar[i + 1] < 0) {
-            lastPair++;
-        }
+int pairs_of_elements(const int *array, const size_t n)
+{ 
+    check_array(array);
+    int counter = 0;
+    for (size_t i = 0; i < n - 1; i++)
+    { 
+        if ((array[i] * array[i + 1])< 0 )
+            counter++;
     }
-    return lastPair;
+
+    if (counter == 0)
+        printf("Таких пар в вашем массиве нет\n");
+
+    return counter;
+}
+
+int number_of_the_last_pair(const int *array, const size_t n)
+{ 
+    check_array(array);
+
+    
+    for (size_t i = n - 1; i > 0; i--) 
+    { 
+        if ((array[i] * array[i - 1]) < 0) 
+            return i - 1; 
+    }
+
+    
+    printf("Таких пар в вашем массиве нет\n");
+    return -1; 
 }
